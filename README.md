@@ -41,7 +41,7 @@ src/
 npm install
 ```
 
-Запуск дев-сервера ([http://localhost:5173](http://localhost:5173)):
+Запуск дев-сервера ([http://localhost:3000](http://localhost:3000)):
 
 ```bash
 npm run start
@@ -65,4 +65,6 @@ npm run preview
 
 ## Деплой
 
-Проект развёрнут на Netlify: <!-- TODO: добавить ссылку -->
+Проект развёрнут на Netlify:
+
+[Ссылка на деплой](https://sergey-shabanov-middle-messenger.netlify.app/)
