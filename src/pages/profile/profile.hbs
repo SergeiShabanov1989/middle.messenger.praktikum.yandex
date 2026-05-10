@@ -1,0 +1,37 @@
+<section class="profile-page">
+    <div class="profile-page__layout">
+  <aside class="profile-page__aside">
+    {{> back-button href="/"}}
+  </aside>
+
+  <div class="profile-page__content">
+    <form class="profile-form" action="#" novalidate>
+      {{> profile-avatar avatar}}
+
+      <div class="profile-form__fields">
+        {{#each fields}}
+          {{> profile-field this}}
+        {{/each}}
+      </div>
+
+      {{#if isView}}
+        <ul class="profile-form__actions">
+          <li class="profile-form__action">
+            <a class="profile-form__link" href="/profile?mode=edit">Изменить данные</a>
+          </li>
+          <li class="profile-form__action">
+            <a class="profile-form__link" href="/profile?mode=password">Изменить пароль</a>
+          </li>
+          <li class="profile-form__action">
+            <a class="profile-form__link profile-form__link_danger" href="/login">Выйти</a>
+          </li>
+        </ul>
+      {{else}}
+        <div class="profile-form__submit">
+          {{> button text="Сохранить" type="submit" view="primary" size="full"}}
+        </div>
+      {{/if}}
+    </form>
+  </div>
+</div>
+</section>

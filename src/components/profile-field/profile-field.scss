@@ -1,0 +1,42 @@
+.profile-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid #eaeaea;
+  font-size: 13px;
+
+  &__label {
+    color: #1a1a1a;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+
+  &__value {
+    color: #999;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__input {
+    flex: 1;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    color: #1a1a1a;
+    text-align: right;
+    padding: 0;
+    outline: none;
+
+    &::placeholder {
+      color: #c4c4c4;
+    }
+
+    &:focus {
+      color: #3369f3;
+    }
+  }
+}
