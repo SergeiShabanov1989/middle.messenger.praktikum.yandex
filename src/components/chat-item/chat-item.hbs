@@ -1,0 +1,15 @@
+<article class="chat-item{{#if (eq id ../activeChatId)}} chat-item--active{{/if}}" data-id="{{id}}">
+  <div class="chat-item__avatar">
+    <img class="chat-item__avatar-img" src="{{avatarUrl}}" alt="" />
+  </div>
+  <div class="chat-item__body">
+    <h2 class="chat-item__title">{{title}}</h2>
+    <p class="chat-item__preview">{{{lastMessage.text}}}</p>
+  </div>
+  <div class="chat-item__meta">
+    <time class="chat-item__time">{{lastMessage.time}}</time>
+    {{#if unreadCount}}
+      <span class="chat-item__badge">{{unreadCount}}</span>
+    {{/if}}
+  </div>
+</article>

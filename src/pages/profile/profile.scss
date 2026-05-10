@@ -1,0 +1,83 @@
+.profile-page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #ededed;
+
+  &__layout {
+    flex: 1;
+    display: flex;
+    padding: 20px;
+    align-items: stretch;
+    gap: 0;
+  }
+
+  &__aside {
+    width: 90px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid #eaeaea;
+    background-color: #fff;
+  }
+
+  &__content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 60px 24px;
+    background-color: #fff;
+  }
+}
+
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 24px;
+  width: 100%;
+  max-width: 510px;
+
+  &__fields {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__actions {
+    list-style: none;
+    margin: 16px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__action {
+    padding: 12px 0;
+    border-bottom: 1px solid #eaeaea;
+    font-size: 13px;
+
+    &:last-child {
+      border-bottom: 0;
+    }
+  }
+
+  &__link {
+    color: #3369f3;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    &_danger {
+      color: #ff2f2f;
+    }
+  }
+
+  &__submit {
+    margin-top: 16px;
+  }
+}
