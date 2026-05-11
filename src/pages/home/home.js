@@ -43,6 +43,14 @@ function bindEvents() {
       }
     });
   });
+
+  const backButton = document.querySelector('.chat-window__back');
+  if (backButton) {
+    backButton.addEventListener('click', () => {
+      activeChatId = null;
+      render();
+    });
+  }
 }
 
 render();

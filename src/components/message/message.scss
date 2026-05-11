@@ -16,17 +16,17 @@
     border-radius: 12px;
     font-size: 13px;
     line-height: 1.4;
-    color: #1e1e1e;
+    color: var(--color-text);
     position: relative;
   }
 
   &--in &__bubble {
-    background-color: #f8f8f8;
+    background-color: var(--color-surface-muted);
     border-top-left-radius: 2px;
   }
 
   &--out &__bubble {
-    background-color: #e4edfd;
+    background-color: var(--color-primary-bg);
     border-top-right-radius: 2px;
   }
 
@@ -58,12 +58,12 @@
 
   &__time {
     font-size: 11px;
-    color: #999;
+    color: var(--color-text-muted);
   }
 
   &__status {
     display: inline-flex;
     align-items: center;
-    color: #3369f3;
+    color: var(--color-primary);
   }
 }

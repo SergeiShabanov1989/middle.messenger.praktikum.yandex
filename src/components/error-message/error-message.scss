@@ -9,20 +9,20 @@
     margin: 0;
     font-size: 32px;
     font-weight: 600;
-    color: #1a1a1a;
+    color: var(--color-text);
     line-height: 1;
   }
 
   &__text {
     margin: 0;
     font-size: 14px;
-    color: #1a1a1a;
+    color: var(--color-text);
   }
 
   &__link {
     margin-top: 8px;
     font-size: 11px;
-    color: #3369f3;
+    color: var(--color-primary);
     text-decoration: none;
 
     &:hover {

@@ -1,8 +1,17 @@
+@use '../../styles/breakpoints' as bp;
+
 .error-page {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 48px 24px;
-  background-color: #fff;
+  background-color: var(--color-surface);
+
+  @include bp.mobile-only {
+    padding: 24px 16px;
+  }
+
+  @include bp.tablet {
+    padding: 48px 24px;
+  }
 }

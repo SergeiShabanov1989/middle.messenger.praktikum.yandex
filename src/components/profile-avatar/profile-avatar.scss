@@ -17,8 +17,8 @@
     width: 130px;
     height: 130px;
     border-radius: 50%;
-    background-color: #e6e6e6;
-    color: #b8b8b8;
+    background-color: var(--color-avatar-bg);
+    color: var(--color-icon-on-muted);
     overflow: hidden;
   }
 
@@ -39,8 +39,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: rgba(0, 0, 0, 0.5);
-    color: #fff;
+    background-color: var(--color-overlay);
+    color: var(--color-surface);
     font-size: 13px;
     line-height: 1.2;
     text-align: center;
@@ -68,6 +68,6 @@
     margin: 0;
     font-size: 16px;
     font-weight: 600;
-    color: #1a1a1a;
+    color: var(--color-text);
   }
 }
