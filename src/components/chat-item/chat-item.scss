@@ -7,15 +7,15 @@
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: rgba(228, 237, 253, 1);
+    background-color: var(--color-primary-bg);
   }
 
   &--active {
-    background-color: #E4EDFD;
+    background-color: var(--color-primary-bg);
   }
 
   &--active:hover {
-    background-color: #E4EDFD;
+    background-color: var(--color-primary-bg);
   }
 
   &__avatar {
@@ -24,7 +24,7 @@
     height: 47px;
     border-radius: 50%;
     overflow: hidden;
-    background-color: #E0E0E0;
+    background-color: var(--color-avatar-bg);
   }
 
   &__avatar-img {
@@ -43,7 +43,7 @@
     margin: 0 0 4px;
     font-size: 16px;
     font-weight: 600;
-    color: #1E1E1E;
+    color: var(--color-text);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -52,7 +52,7 @@
   &__preview {
     margin: 0;
     font-size: 14px;
-    color: #999;
+    color: var(--color-text-muted);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -68,7 +68,7 @@
 
   &__time {
     font-size: 12px;
-    color: #999;
+    color: var(--color-text-muted);
   }
 
   &__badge {
@@ -78,8 +78,8 @@
     min-width: 22px;
     height: 22px;
     border-radius: 50%;
-    background-color: #3369F3;
-    color: #fff;
+    background-color: var(--color-primary);
+    color: var(--color-surface);
     font-size: 12px;
     font-weight: 600;
   }

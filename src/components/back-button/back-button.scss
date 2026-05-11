@@ -5,13 +5,13 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background-color: #3369F3;
-  color: #FFF;
+  background-color: var(--color-primary);
+  color: var(--color-surface);
   text-decoration: none;
   transition: background-color 0.15s ease;
 
   &:hover {
-    background-color: #2956C8;
+    background-color: var(--color-primary-hover);
   }
 
   &__icon {

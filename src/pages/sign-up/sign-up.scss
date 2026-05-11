@@ -1,8 +1,17 @@
+@use '../../styles/breakpoints' as bp;
+
 .sign-up-page {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
-  background-color: #ededed;
+  background-color: var(--color-bg);
+
+  @include bp.mobile-only {
+    padding: 16px;
+  }
+
+  @include bp.tablet {
+    padding: 24px;
+  }
 }

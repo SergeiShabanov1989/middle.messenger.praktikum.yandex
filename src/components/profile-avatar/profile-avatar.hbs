@@ -3,7 +3,7 @@
     <label class="profile-avatar__control">
       <span class="profile-avatar__image">
         {{#if avatarUrl}}
-          <img class="profile-avatar__img" src="{{avatarUrl}}" alt="" />
+          <img class="profile-avatar__img" src="{{avatarUrl}}" alt="Аватар профиля" />
         {{else}}
           {{> profile-avatar-icon-placeholder}}
         {{/if}}
@@ -14,7 +14,7 @@
   {{else}}
     <span class="profile-avatar__image">
       {{#if avatarUrl}}
-        <img class="profile-avatar__img" src="{{avatarUrl}}" alt="" />
+        <img class="profile-avatar__img" src="{{avatarUrl}}" alt="Аватар профиля" />
       {{else}}
         {{> profile-avatar-icon-placeholder}}
       {{/if}}

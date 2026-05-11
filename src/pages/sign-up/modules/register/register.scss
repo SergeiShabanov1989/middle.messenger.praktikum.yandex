@@ -1,19 +1,31 @@
+@use '../../../../styles/breakpoints' as bp;
+
 .register-form {
   display: flex;
   flex-direction: column;
   gap: 24px;
-  padding: 32px;
-  background-color: #fff;
+  background-color: var(--color-surface);
   border-radius: 12px;
-  box-shadow: 0px 0px 6px 4px rgba(20, 30, 50, 0.08);
+  box-shadow: 0px 0px 6px 4px var(--color-shadow-card);
   box-sizing: border-box;
-  min-width: 340px;
+  width: 100%;
+
+  @include bp.mobile-only {
+    padding: 24px 20px;
+    max-width: 100%;
+  }
+
+  @include bp.tablet {
+    padding: 32px;
+    min-width: 340px;
+    width: auto;
+  }
 
   &__title {
     margin: 0;
     font-size: 22px;
     font-weight: 600;
-    color: #1a1a1a;
+    color: var(--color-text);
     text-align: center;
   }
 
@@ -32,7 +44,7 @@
   &__label {
     font-size: 9px;
     font-weight: 500;
-    color: #999999;
+    color: var(--color-text-muted);
     text-transform: uppercase;
   }
 
@@ -40,9 +52,9 @@
     width: 100%;
     padding: 10px 12px;
     border: none;
-    border-bottom: 1px solid #3369F3;
-    background-color: #fff;
-    color: #1a1a1a;
+    border-bottom: 1px solid var(--color-primary);
+    background-color: var(--color-surface);
+    color: var(--color-text);
     font: inherit;
     font-size: 14px;
     line-height: 1.4;
@@ -50,16 +62,16 @@
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
 
     &::placeholder {
-      color: #9aa3b2;
+      color: var(--color-text-placeholder);
     }
 
     &:hover {
-      border-color: #444;
+      border-color: var(--color-text-strong);
     }
 
     &:focus {
       outline: none;
-      border-color: #0130a7;
+      border-color: var(--color-primary-hover);
     }
   }
 
@@ -76,7 +88,7 @@
 
   &__link {
     font-size: 13px;
-    color: #3f8ae0;
+    color: var(--color-primary);
     text-decoration: none;
 
     &:hover {

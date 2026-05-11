@@ -4,17 +4,17 @@
   justify-content: space-between;
   gap: 16px;
   padding: 12px 0;
-  border-bottom: 1px solid #eaeaea;
+  border-bottom: 1px solid var(--color-border);
   font-size: 13px;
 
   &__label {
-    color: #1a1a1a;
+    color: var(--color-text);
     font-weight: 500;
     flex-shrink: 0;
   }
 
   &__value {
-    color: #999;
+    color: var(--color-text-muted);
     text-align: right;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -26,17 +26,17 @@
     border: 0;
     background: transparent;
     font: inherit;
-    color: #1a1a1a;
+    color: var(--color-text);
     text-align: right;
     padding: 0;
     outline: none;
 
     &::placeholder {
-      color: #c4c4c4;
+      color: var(--color-text-placeholder);
     }
 
     &:focus {
-      color: #3369f3;
+      color: var(--color-primary);
     }
   }
 }
