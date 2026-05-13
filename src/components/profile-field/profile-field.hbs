@@ -1,0 +1,17 @@
+<div class="profile-field{{#if editable}} profile-field_editable{{/if}}">
+  {{#if editable}}
+    <label class="profile-field__label" for="field-{{name}}">{{label}}</label>
+    <input
+      id="field-{{name}}"
+      class="profile-field__input"
+      type="{{#if type}}{{type}}{{else}}text{{/if}}"
+      name="{{name}}"
+      value="{{value}}"
+      placeholder="{{#if placeholder}}{{placeholder}}{{else}}{{label}}{{/if}}"
+      {{#if autocomplete}}autocomplete="{{autocomplete}}"{{/if}}
+    />
+  {{else}}
+    <span class="profile-field__label">{{label}}</span>
+    <span class="profile-field__value">{{value}}</span>
+  {{/if}}
+</div>

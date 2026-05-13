@@ -1,0 +1,86 @@
+.chat-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: var(--color-primary-bg);
+  }
+
+  &--active {
+    background-color: var(--color-primary-bg);
+  }
+
+  &--active:hover {
+    background-color: var(--color-primary-bg);
+  }
+
+  &__avatar {
+    flex-shrink: 0;
+    width: 47px;
+    height: 47px;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: var(--color-avatar-bg);
+  }
+
+  &__avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  &__body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__title {
+    margin: 0 0 4px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__preview {
+    margin: 0;
+    font-size: 14px;
+    color: var(--color-text-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  &__time {
+    font-size: 12px;
+    color: var(--color-text-muted);
+  }
+
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background-color: var(--color-primary);
+    color: var(--color-surface);
+    font-size: 12px;
+    font-weight: 600;
+  }
+}

@@ -1,0 +1,98 @@
+@use '../../../../styles/breakpoints' as bp;
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  background-color: var(--color-surface);
+  border-radius: 12px;
+  box-shadow: 0px 0px 6px 4px var(--color-shadow-card);
+  box-sizing: border-box;
+  width: 100%;
+
+  @include bp.mobile-only {
+    padding: 24px 20px;
+    max-width: 100%;
+  }
+
+  @include bp.tablet {
+    padding: 32px;
+    min-width: 340px;
+    width: auto;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--color-text);
+    text-align: center;
+  }
+
+  &__fields {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  &__label {
+    font-size: 9px;
+    font-weight: 500;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+  }
+
+  &__input {
+    width: 100%;
+    padding: 10px 12px;
+    border: none;
+    border-bottom: 1px solid var(--color-primary);
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    font: inherit;
+    font-size: 14px;
+    line-height: 1.4;
+    box-sizing: border-box;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+    &::placeholder {
+      color: var(--color-text-placeholder);
+    }
+
+    &:hover {
+      border-color: var(--color-text-strong);
+    }
+
+    &:focus {
+      outline: none;
+      border-color: var(--color-primary-hover);
+    }
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  &__submit {
+    margin-top: 4px;
+  }
+
+  &__link {
+    font-size: 13px;
+    color: var(--color-primary);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

@@ -1,0 +1,73 @@
+.profile-avatar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+
+  &__control {
+    cursor: pointer;
+    display: inline-flex;
+  }
+
+  &__image {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    background-color: var(--color-avatar-bg);
+    color: var(--color-icon-on-muted);
+    overflow: hidden;
+  }
+
+  &__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  &__placeholder {
+    display: block;
+  }
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-overlay);
+    color: var(--color-surface);
+    font-size: 13px;
+    line-height: 1.2;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+
+  &_editable &__control:hover &__overlay,
+  &_editable &__control:focus-within &__overlay {
+    opacity: 1;
+  }
+
+  &__input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+  }
+
+  &__name {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+}

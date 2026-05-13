@@ -1,0 +1,22 @@
+<div class="message message--{{type}}">
+  <div class="message__bubble">
+    {{#if imageUrl}}
+      <img class="message__image" src="{{imageUrl}}" alt="Прикрепленное изображение" />
+    {{/if}}
+    {{#if text}}
+      <p class="message__text">{{{text}}}</p>
+    {{/if}}
+    <div class="message__meta">
+      <time class="message__time">{{time}}</time>
+      {{#if (eq type "out")}}
+        <span class="message__status message__status--{{status}}" aria-label="{{status}}">
+          {{#if (eq status "read")}}
+            {{> message-icon-double-check}}
+          {{else}}
+            {{> message-icon-check}}
+          {{/if}}
+        </span>
+      {{/if}}
+    </div>
+  </div>
+</div>
