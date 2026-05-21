@@ -4,29 +4,23 @@
   --color-primary-active: #1c5fae;
   --color-primary-soft: #cfd9ff;
   --color-primary-bg: #e4edfd;
-  --color-primary-ring: rgba(51, 105, 243, 0.5);
-  --color-primary-tint: rgba(51, 105, 243, 0.08);
-
+  --color-primary-ring: rgb(51 105 243 / 50%);
+  --color-primary-tint: rgb(51 105 243 / 8%);
   --color-text: #1a1a1a;
   --color-text-strong: #333;
   --color-text-soft: #555;
   --color-text-muted: #999;
   --color-text-placeholder: #c4c4c4;
-
   --color-bg: #ededed;
   --color-surface: #fff;
   --color-surface-soft: #fbfbfb;
   --color-surface-muted: #f8f8f8;
   --color-input-bg: #efefef;
-
   --color-border: #eaeaea;
   --color-border-soft: #f0f0f0;
-
   --color-avatar-bg: #e0e0e0;
   --color-icon-on-muted: #b8b8b8;
-
   --color-danger: #ff2f2f;
-
-  --color-shadow-card: rgba(20, 30, 50, 0.08);
-  --color-overlay: rgba(0, 0, 0, 0.5);
+  --color-shadow-card: rgb(20 30 50 / 8%);
+  --color-overlay: rgb(0 0 0 / 50%);
 }

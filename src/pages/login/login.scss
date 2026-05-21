@@ -1,4 +1,4 @@
-@use '../../styles/breakpoints' as bp;
+@use "../../styles/breakpoints" as bp;
 
 .login-page {
   flex: 1;
@@ -22,7 +22,7 @@
   gap: 24px;
   background-color: var(--color-surface);
   border-radius: 12px;
-  box-shadow: 0px 0px 6px 4px var(--color-shadow-card);
+  box-shadow: 0 0 6px 4px var(--color-shadow-card);
   box-sizing: border-box;
   width: 100%;
 
@@ -75,7 +75,9 @@
     font-size: 14px;
     line-height: 1.4;
     box-sizing: border-box;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    transition:
+      border-color 0.15s ease,
+      box-shadow 0.15s ease;
 
     &::placeholder {
       color: var(--color-text-placeholder);

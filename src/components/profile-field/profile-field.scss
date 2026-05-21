@@ -39,4 +39,16 @@
       color: var(--color-primary);
     }
   }
+
+  &__error {
+    flex-basis: 100%;
+    text-align: right;
+    font-size: 11px;
+    color: var(--color-danger);
+    min-height: 0;
+  }
+
+  &_invalid &__input {
+    color: var(--color-danger);
+  }
 }

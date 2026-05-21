@@ -1,23 +1,20 @@
+import "./styles/global.scss";
+import { router } from "./core/routerInstance";
+import { registerAllComponents } from "./core/registerComponents";
+import ChatsPage from "./pages/home/ChatsPage";
+import LoginPage from "./pages/login/LoginPage";
+import SignUpPage from "./pages/sign-up/SignUpPage";
+import ProfilePage from "./pages/profile/ProfilePage";
+import ServerErrorPage from "./pages/server-error/ServerErrorPage";
+import NotFoundPage from "./pages/not-found/NotFoundPage";
 
-import './styles/global.scss';
+registerAllComponents();
 
-type PageLoader = () => Promise<unknown>;
-
-const routes: Record<string, PageLoader> = {
-  '/': () => import('./pages/home/index.js'),
-  '/login': () => import('./pages/login/index.js'),
-  '/sign-up': () => import('./pages/sign-up/index.js'),
-  '/profile': () => import('./pages/profile/index.js'),
-  '/500': () => import('./pages/server-error/index.js'),
-  '/404': () => import('./pages/not-found/index.js'),
-};
-
-const pathname = window.location.pathname;
-const load = routes[pathname];
-
-if (load) {
-  load();
-} else {
-  history.replaceState(null, '', '/404');
-  routes['/404']();
-}
+router
+  .use("/", () => new ChatsPage())
+  .use("/login", () => new LoginPage())
+  .use("/sign-up", () => new SignUpPage())
+  .use("/profile", () => new ProfilePage())
+  .use("/500", () => new ServerErrorPage())
+  .setFallback(() => new NotFoundPage())
+  .start();

@@ -1,5 +1,5 @@
-@use 'variables';
-@use 'fonts';
+@use "variables";
+@use "fonts";
 
 *,
 *::before,
@@ -15,7 +15,15 @@ body {
 
 body {
   min-height: 100vh;
-  font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  display: flex;
+  flex-direction: column;
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
   font-size: 14px;
   line-height: 1.4;
   color: var(--color-text);
@@ -29,4 +37,11 @@ a {
 
 button {
   font-family: inherit;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }

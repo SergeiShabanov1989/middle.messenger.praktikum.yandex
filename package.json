@@ -8,11 +8,28 @@
   },
   "scripts": {
     "start": "npm run build && vite preview",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "dev": "vite",
+    "type:check": "tsc --noEmit",
+    "build": "npm run type:check && vite build",
+    "preview": "vite preview",
+    "format": "prettier --check .",
+    "format:fix": "prettier --write .",
+    "lint:css": "stylelint \"src/**/*.{css,scss}\"",
+    "lint:css:fix": "stylelint --fix \"src/**/*.{css,scss}\"",
+    "lint:js": "eslint .",
+    "lint:js:fix": "eslint --fix .",
+    "lint": "npm run type:check && npm run lint:js && npm run lint:css && npm run format",
+    "lint:fix": "npm run lint:js:fix && npm run lint:css:fix && npm run format:fix"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.4.0",
+    "globals": "^17.6.0",
+    "prettier": "^3.8.3",
+    "stylelint": "^17.11.1",
+    "stylelint-config-standard": "^40.0.0",
     "typescript": "~6.0.2",
+    "typescript-eslint": "^8.59.4",
     "vite": "^8.0.10"
   },
   "dependencies": {
