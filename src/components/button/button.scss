@@ -9,7 +9,9 @@
   font-weight: 500;
   line-height: 1.2;
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease,
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
     box-shadow 0.2s ease;
 
   &:focus-visible {
@@ -21,15 +23,22 @@
     background-color: var(--color-primary);
     color: var(--color-surface);
 
-    &:hover { background-color: var(--color-primary-hover); }
-    &:active { background-color: var(--color-primary-active); }
+    &:hover {
+      background-color: var(--color-primary-hover);
+    }
+
+    &:active {
+      background-color: var(--color-primary-active);
+    }
   }
 
   &_view_ghost {
     background-color: transparent;
     color: var(--color-primary);
 
-    &:hover { background-color: var(--color-primary-tint); }
+    &:hover {
+      background-color: var(--color-primary-tint);
+    }
   }
 
   &_size_full {
