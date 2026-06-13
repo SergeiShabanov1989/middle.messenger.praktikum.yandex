@@ -2,15 +2,64 @@ import type Block from "./Block";
 
 export type PageFactory = () => Block;
 
-interface Route {
-  pathname: string;
-  factory: PageFactory;
+export type AuthGuard = (pathname: string) => string | null;
+
+class Route {
+  private readonly pathname: string;
+  private readonly factory: PageFactory;
+  private readonly rootQuery: string;
+  private block: Block | null = null;
+
+  constructor(pathname: string, factory: PageFactory, rootQuery: string) {
+    this.pathname = pathname;
+    this.factory = factory;
+    this.rootQuery = rootQuery;
+  }
+
+  public navigate(pathname: string): void {
+    if (this.match(pathname)) {
+      this.render();
+    }
+  }
+
+  public leave(): void {
+    if (this.block) {
+      this.block.hide();
+    }
+  }
+
+  public match(pathname: string): boolean {
+    return pathname === this.pathname;
+  }
+
+  public render(): void {
+    const root = document.querySelector(this.rootQuery);
+    if (!root) {
+      throw new Error(`Router: корневой элемент "${this.rootQuery}" не найден`);
+    }
+
+    root.replaceChildren();
+
+    if (!this.block) {
+      this.block = this.factory();
+    }
+
+    const element = this.block.element();
+    if (element) {
+      root.appendChild(element);
+      this.block.show();
+    }
+  }
 }
 
 export default class Router {
   private routes: Route[] = [];
 
-  private fallback: PageFactory | null = null;
+  private currentRoute: Route | null = null;
+
+  private fallback: Route | null = null;
+
+  private guard: AuthGuard | null = null;
 
   private readonly rootSelector: string;
 
@@ -19,12 +68,17 @@ export default class Router {
   }
 
   public use(pathname: string, factory: PageFactory): this {
-    this.routes.push({ pathname, factory });
+    this.routes.push(new Route(pathname, factory, this.rootSelector));
     return this;
   }
 
   public setFallback(factory: PageFactory): this {
-    this.fallback = factory;
+    this.fallback = new Route("*", factory, this.rootSelector);
+    return this;
+  }
+
+  public setGuard(guard: AuthGuard): this {
+    this.guard = guard;
     return this;
   }
 
@@ -67,22 +121,26 @@ export default class Router {
 
   private renderCurrent(): void {
     const { pathname } = window.location;
-    const route = this.routes.find((r) => r.pathname === pathname);
-    const factory = route?.factory ?? this.fallback;
-    if (!factory) {
-      return;
+
+    if (this.guard) {
+      const redirect = this.guard(pathname);
+      if (redirect !== null && redirect !== pathname) {
+        window.history.replaceState({}, "", redirect);
+        this.renderCurrent();
+        return;
+      }
     }
 
-    const root = document.querySelector(this.rootSelector);
-    if (!root) {
-      throw new Error(`Router: корневой элемент "${this.rootSelector}" не найден`);
+    const nextRoute =
+      this.routes.find((r) => r.match(pathname)) ?? this.fallback;
+
+    if (!nextRoute) return;
+
+    if (this.currentRoute && this.currentRoute !== nextRoute) {
+      this.currentRoute.leave();
     }
 
-    const block = factory();
-    const element = block.element();
-    root.replaceChildren();
-    if (element) {
-      root.appendChild(element);
-    }
+    this.currentRoute = nextRoute;
+    nextRoute.navigate(pathname);
   }
 }

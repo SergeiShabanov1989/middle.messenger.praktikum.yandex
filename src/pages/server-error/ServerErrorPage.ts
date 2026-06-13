@@ -5,7 +5,7 @@ export default class ServerErrorPage extends ErrorPage {
     super({
       code: "500",
       text: "Мы уже фиксим",
-      href: "/",
+      href: "/messenger",
       linkText: "Назад к чатам",
     });
   }

@@ -1,0 +1,160 @@
+.user-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: var(--color-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.user-modal {
+  background-color: var(--color-surface);
+  border-radius: 12px;
+  padding: 28px;
+  width: 360px;
+  max-width: calc(100vw - 32px);
+  box-shadow: 0 8px 32px rgb(0 0 0 / 12%);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  &__title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  &__label {
+    font-size: 13px;
+    color: var(--color-text-soft);
+  }
+
+  &__input {
+    height: 42px;
+    border: 1.5px solid var(--color-border);
+    border-radius: 8px;
+    padding: 0 14px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--color-text);
+    background-color: var(--color-input-bg);
+    outline: none;
+    transition: border-color 0.15s;
+
+    &:focus {
+      border-color: var(--color-primary);
+      background-color: var(--color-surface);
+    }
+
+    &::placeholder {
+      color: var(--color-text-placeholder);
+    }
+
+    &--error {
+      border-color: var(--color-danger);
+    }
+  }
+
+  &__error {
+    margin: -8px 0 0;
+    font-size: 12px;
+    color: var(--color-danger);
+    min-height: 16px;
+  }
+
+  &__file-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  &__file-pick {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 38px;
+    padding: 0 16px;
+    border: 1.5px solid var(--color-primary);
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-primary);
+    cursor: pointer;
+    transition: background-color 0.15s;
+    align-self: flex-start;
+
+    &:hover {
+      background-color: var(--color-primary-tint);
+    }
+  }
+
+  &__file-name {
+    font-size: 12px;
+    color: var(--color-text-muted);
+  }
+
+  &__file-preview {
+    display: flex;
+    justify-content: center;
+  }
+
+  &__preview-img {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--color-border);
+  }
+
+  &__actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 4px;
+  }
+
+  &__btn {
+    height: 40px;
+    padding: 0 22px;
+    border-radius: 8px;
+    border: 0;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background-color 0.15s;
+
+    &--cancel {
+      background-color: var(--color-surface-muted);
+      color: var(--color-text-soft);
+
+      &:hover {
+        background-color: var(--color-input-bg);
+      }
+    }
+
+    &--confirm {
+      background-color: var(--color-primary);
+      color: #fff;
+
+      &:hover {
+        background-color: var(--color-primary-hover);
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+  }
+}

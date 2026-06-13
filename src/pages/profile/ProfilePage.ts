@@ -2,7 +2,8 @@ import Block, { type BlockOwnProps } from "../../core/Block";
 import ProfileField from "../../components/profile-field/ProfileField";
 import UserController from "../../controllers/UserController";
 import AuthController from "../../controllers/AuthController";
-import { router } from "../../core/routerInstance";
+import UserModal from "../../components/user-modal/UserModal";
+import { ApiError } from "../../core/HTTPTransport";
 import type { User } from "../../mocks/types";
 import "../../components/back-button/back-button.scss";
 import "../../components/profile-avatar/profile-avatar.scss";
@@ -17,10 +18,23 @@ interface ProfilePageProps extends BlockOwnProps {
   isView: boolean;
   isEdit: boolean;
   isPassword: boolean;
+  error?: string;
 }
 
+const EMPTY_USER: User = {
+  email: "",
+  login: "",
+  first_name: "",
+  second_name: "",
+  display_name: "",
+  phone: "",
+  avatarUrl: "",
+};
+
+type DataFieldName = Exclude<keyof User, "id">;
+
 const DATA_FIELDS: Array<{
-  name: keyof User;
+  name: DataFieldName;
   label: string;
   type?: string;
   autocomplete?: string;
@@ -53,29 +67,34 @@ export default class ProfilePage extends Block<ProfilePageProps> {
     <main class="profile-page">
       <div class="profile-page__layout">
         <aside class="profile-page__aside">
-          {{{ BackButton href="/" }}}
+          {{{ BackButton href="/messenger" }}}
         </aside>
         <div class="profile-page__content">
           <form class="profile-form" novalidate ref="form">
-            {{{ ProfileAvatar avatarUrl=user.avatarUrl name=user.first_name editable=isEdit }}}
+            {{{ ProfileAvatar avatarUrl=user.avatarUrl name=user.first_name editable=true }}}
 
             <div class="profile-form__fields" ref="fields"></div>
+
+            {{#if error}}
+              <p class="profile-form__error">{{error}}</p>
+            {{/if}}
 
             {{#if isView}}
               <ul class="profile-form__actions">
                 <li class="profile-form__action">
-                  <a class="profile-form__link" href="/profile?mode=edit">Изменить данные</a>
+                  <a class="profile-form__link" href="/settings?mode=edit">Изменить данные</a>
                 </li>
                 <li class="profile-form__action">
-                  <a class="profile-form__link" href="/profile?mode=password">Изменить пароль</a>
+                  <a class="profile-form__link" href="/settings?mode=password">Изменить пароль</a>
                 </li>
                 <li class="profile-form__action">
-                  <a class="profile-form__link profile-form__link_danger" href="/login" ref="logoutLink">Выйти</a>
+                  <a class="profile-form__link profile-form__link_danger" href="/" ref="logoutLink">Выйти</a>
                 </li>
               </ul>
             {{else}}
               <div class="profile-form__submit">
-                {{{ Button label="Сохранить" type="submit" view="primary" size="full" }}}
+                {{{ Button label="Сохранить" type="submit" view="primary" size="full" ref="submitBtn" }}}
+                <button type="button" class="profile-form__cancel" ref="cancelBtn">Отменить</button>
               </div>
             {{/if}}
           </form>
@@ -85,6 +104,8 @@ export default class ProfilePage extends Block<ProfilePageProps> {
   `;
 
   private fieldComponents: ProfileField[] = [];
+  private initialValues: Record<string, string> = {};
+  private readonly userModal = new UserModal();
 
   constructor() {
     const params = new URLSearchParams(window.location.search);
@@ -92,17 +113,31 @@ export default class ProfilePage extends Block<ProfilePageProps> {
     const mode: ProfileMode =
       modeParam === "edit" || modeParam === "password" ? modeParam : "view";
 
-    const user = UserController.get();
+    const user = UserController.get() ?? EMPTY_USER;
 
-    super({
+    super({ mode, user, isView: mode === "view", isEdit: mode === "edit", isPassword: mode === "password" });
+
+    this.buildFields(mode, user);
+  }
+
+  public override show(): void {
+    const params = new URLSearchParams(window.location.search);
+    const modeParam = params.get("mode");
+    const mode: ProfileMode =
+      modeParam === "edit" || modeParam === "password" ? modeParam : "view";
+
+    const user = UserController.get() ?? EMPTY_USER;
+    this.buildFields(mode, user);
+    this.setProps({
       mode,
       user,
+      error: undefined,
       isView: mode === "view",
       isEdit: mode === "edit",
       isPassword: mode === "password",
     });
 
-    this.buildFields(mode, user);
+    super.show();
   }
 
   private buildFields(mode: ProfileMode, user: User): void {
@@ -118,19 +153,32 @@ export default class ProfilePage extends Block<ProfilePageProps> {
             value: "",
           }),
       );
+      this.initialValues = Object.fromEntries(PASSWORD_FIELDS.map((f) => [f.name, ""]));
     } else {
       this.fieldComponents = DATA_FIELDS.map(
         (config) =>
           new ProfileField({
             name: config.name,
             label: config.label,
-            value: user[config.name] ?? "",
+            value: String(user[config.name] ?? ""),
             type: config.type,
             autocomplete: config.autocomplete,
             editable: mode === "edit",
           }),
       );
+      this.initialValues = Object.fromEntries(
+        DATA_FIELDS.map((f) => [f.name, String(user[f.name] ?? "")]),
+      );
     }
+  }
+
+  private checkChanges(): void {
+    const submitBtn = this.refs["submitBtn"];
+    if (!(submitBtn instanceof HTMLButtonElement)) return;
+    const hasChanges = this.fieldComponents.some(
+      (field) => field.value() !== (this.initialValues[field.name()] ?? ""),
+    );
+    submitBtn.disabled = !hasChanges;
   }
 
   protected override componentDidMount(): void {
@@ -142,11 +190,37 @@ export default class ProfilePage extends Block<ProfilePageProps> {
         if (node) fieldsContainer.appendChild(node);
       });
       this.children.push(...this.fieldComponents);
+      fieldsContainer.addEventListener("input", () => this.checkChanges());
     }
+
+    this.checkChanges();
 
     const form = this.refs["form"];
     if (form instanceof HTMLFormElement) {
-      form.addEventListener("submit", (event) => this.handleSubmit(event));
+      form.addEventListener("submit", (event) => {
+        void this.handleSubmit(event);
+      });
+    }
+
+    const avatarControl = this.element()?.querySelector<HTMLElement>(".profile-avatar__control");
+    if (avatarControl) {
+      avatarControl.addEventListener("click", (e) => {
+        e.preventDefault();
+        this.userModal.showFile("Сменить аватар", (file) => {
+          const fd = new FormData();
+          fd.append("avatar", file);
+          void UserController.changeAvatar(fd)
+            .then(() => {
+              const updatedUser = UserController.get() ?? EMPTY_USER;
+              this.setProps({ user: updatedUser });
+              this.userModal.hide();
+            })
+            .catch((err: unknown) => {
+              const msg = err instanceof ApiError ? err.reason : "Ошибка загрузки аватара";
+              this.userModal.showError(msg);
+            });
+        });
+      });
     }
 
     const logoutLink = this.refs["logoutLink"];
@@ -156,9 +230,19 @@ export default class ProfilePage extends Block<ProfilePageProps> {
         void AuthController.logout();
       });
     }
+
+    const cancelBtn = this.refs["cancelBtn"];
+    if (cancelBtn) {
+      cancelBtn.addEventListener("click", () => this.returnToView());
+    }
   }
 
-  private handleSubmit(event: Event): void {
+  private returnToView(): void {
+    window.history.replaceState({}, "", "/settings");
+    this.show();
+  }
+
+  private async handleSubmit(event: Event): Promise<void> {
     event.preventDefault();
 
     const values: Record<string, string> = {};
@@ -170,17 +254,24 @@ export default class ProfilePage extends Block<ProfilePageProps> {
       if (!result.valid) isValid = false;
     });
 
-    console.log(values);
     if (!isValid) return;
 
-    if (this.props.mode === "password") {
-      UserController.changePassword({
-        oldPassword: values["old_password"] ?? "",
-        newPassword: values["new_password"] ?? "",
-      });
-    } else if (this.props.mode === "edit") {
-      UserController.update(values as Partial<User>);
+    this.setProps({ error: undefined });
+
+    try {
+      if (this.props.mode === "password") {
+        await UserController.changePassword({
+          oldPassword: values["old_password"] ?? "",
+          newPassword: values["new_password"] ?? "",
+        });
+      } else if (this.props.mode === "edit") {
+        await UserController.update(values as Partial<User>);
+      }
+      this.returnToView();
+    } catch (err) {
+      const msg =
+        err instanceof ApiError ? err.reason : "Ошибка сохранения";
+      this.setProps({ error: msg });
     }
-    router.go("/profile");
   }
 }
