@@ -15,6 +15,7 @@ export const chats: Chat[] = [
       {
         name: "Бот",
         avatarUrl: "https://placehold.co/64/lightpink/lightpink/png",
+        initials: "Б",
       },
     ],
     messages: [
@@ -51,18 +52,22 @@ export const chats: Chat[] = [
       {
         name: "Катя",
         avatarUrl: "https://placehold.co/64/lightblue/lightblue/png",
+        initials: "К",
       },
       {
         name: "Витя",
         avatarUrl: "https://placehold.co/64/lightgreen/lightgreen/png",
+        initials: "В",
       },
       {
         name: "Аня",
         avatarUrl: "https://placehold.co/64/lightsalmon/lightsalmon/png",
+        initials: "А",
       },
       {
         name: "Лёша",
         avatarUrl: "https://placehold.co/64/lightseagreen/lightseagreen/png",
+        initials: "Л",
       },
     ],
     messages: [

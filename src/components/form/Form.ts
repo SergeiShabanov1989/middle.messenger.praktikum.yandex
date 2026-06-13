@@ -45,14 +45,18 @@ export default abstract class Form<
     event.preventDefault();
     const isValid = this.validateAll();
     const values = this.collectValues();
+    if (!isValid) return;
 
-    console.log(values);
-    if (isValid) {
-      this.onValidSubmit(values);
+    const result = this.onValidSubmit(values);
+    if (result instanceof Promise) {
+      result.catch((err: unknown) => this.onSubmitError(err));
     }
   }
 
-  protected onValidSubmit(_values: Record<string, string>): void {
+  protected onValidSubmit(_values: Record<string, string>): Promise<void> | void {
     // override in subclass
   }
+
+  // Переопределяется в подклассах для показа ошибок API
+  protected onSubmitError(_error: unknown): void {}
 }

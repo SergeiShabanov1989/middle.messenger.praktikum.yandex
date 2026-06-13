@@ -1,9 +1,14 @@
 import Form, { type FormProps } from "../../components/form/Form";
 import AuthController from "../../controllers/AuthController";
+import { ApiError } from "../../core/HTTPTransport";
 import "./sign-up.scss";
 import "./modules/register/register.scss";
 
-export default class SignUpPage extends Form<FormProps> {
+interface SignUpPageProps extends FormProps {
+  error?: string;
+}
+
+export default class SignUpPage extends Form<SignUpPageProps> {
   protected template = `
     <main class="sign-up-page">
       <form class="register-form" novalidate>
@@ -17,9 +22,12 @@ export default class SignUpPage extends Form<FormProps> {
           {{{ Field name="password"     label="Пароль"     type="password" autocomplete="new-password" }}}
           {{{ Field name="password_confirm" label="Пароль (ещё раз)" type="password" autocomplete="new-password" }}}
         </div>
+        {{#if error}}
+          <p class="register-form__error">{{error}}</p>
+        {{/if}}
         <div class="register-form__actions">
           {{{ Button label="Зарегистрироваться" type="submit" view="primary" size="full" }}}
-          <a class="register-form__link" href="/login">Уже зарегистрированы? Войти</a>
+          <a class="register-form__link" href="/">Уже зарегистрированы? Войти</a>
         </div>
       </form>
     </main>
@@ -32,14 +40,30 @@ export default class SignUpPage extends Form<FormProps> {
   protected override async onValidSubmit(
     values: Record<string, string>,
   ): Promise<void> {
+    const password = values["password"] ?? "";
+    const confirm = values["password_confirm"] ?? "";
+
+    if (password !== confirm) {
+      this.setProps({ error: "Пароли не совпадают" });
+      return;
+    }
+
+    this.setProps({ error: undefined });
     await AuthController.register({
       email: values["email"] ?? "",
       login: values["login"] ?? "",
       first_name: values["first_name"] ?? "",
       second_name: values["second_name"] ?? "",
       phone: values["phone"] ?? "",
-      password: values["password"] ?? "",
-      password_confirm: values["password_confirm"] ?? "",
+      password,
     });
+  }
+
+  protected override onSubmitError(err: unknown): void {
+    const msg =
+      err instanceof ApiError
+        ? err.reason
+        : "Ошибка регистрации. Проверьте данные.";
+    this.setProps({ error: msg });
   }
 }
