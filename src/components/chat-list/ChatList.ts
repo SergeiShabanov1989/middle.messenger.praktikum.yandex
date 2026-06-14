@@ -6,6 +6,7 @@ export interface ChatListProps extends BlockOwnProps {
   chats: Chat[];
   activeChatId: number | null;
   onSelect: (id: number) => void;
+  onDelete?: (id: number) => void;
 }
 
 export default class ChatList extends Block<ChatListProps> {
@@ -24,6 +25,7 @@ export default class ChatList extends Block<ChatListProps> {
             lastMessageTime=lastMessage.time
             active=isActive
             onClick=../onSelect
+            onDelete=../onDelete
           }}}
         </li>
       {{else}}

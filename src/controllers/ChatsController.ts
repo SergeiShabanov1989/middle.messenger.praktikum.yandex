@@ -34,13 +34,18 @@ class ChatsController {
   private async loadChatMembers(chatId: number): Promise<void> {
     const apiUsers = await ChatsService.getUsers(chatId);
     const { chats } = appStore.getState();
+    const chat = chats.find((c) => c.id === chatId);
+    const createdBy = chat?.createdBy ?? -1;
     const members = apiUsers.map((u) => ({
+      id: u.id,
       name: u.display_name ?? `${u.first_name} ${u.second_name}`,
+      login: u.login,
       avatarUrl: avatarUrl(u.avatar),
       initials: (u.display_name ?? u.first_name).charAt(0).toUpperCase(),
+      isOwner: u.id === createdBy,
     }));
-    const updated = chats.map((chat) =>
-      chat.id === chatId ? { ...chat, members } : chat,
+    const updated = chats.map((c) =>
+      c.id === chatId ? { ...c, members } : c,
     );
     appStore.set({ chats: updated });
   }
@@ -81,6 +86,27 @@ class ChatsController {
     await this.loadChats();
   }
 
+  public async deleteChat(chatId: number): Promise<void> {
+    await ChatsService.delete(chatId);
+    const { activeChatId } = appStore.getState();
+    if (activeChatId === chatId) {
+      appStore.set({ activeChatId: null });
+    }
+    await this.loadChats();
+  }
+
+  public async updateChatAvatar(chatId: number, file: File): Promise<void> {
+    const fd = new FormData();
+    fd.append('chatId', String(chatId));
+    fd.append('avatar', file);
+    const apiChat = await ChatsService.updateAvatar(fd);
+    const { chats } = appStore.getState();
+    const updated = chats.map((c) =>
+      c.id === chatId ? { ...c, avatarUrl: avatarUrl(apiChat.avatar) } : c,
+    );
+    appStore.set({ chats: updated });
+  }
+
   public async addUserToChat(chatId: number, login: string): Promise<void> {
     const users = await UserService.searchByLogin(login);
     if (users.length === 0) {
@@ -97,6 +123,11 @@ class ChatsController {
       throw new NotFoundError(`Пользователь с логином "${login}" не найден`);
     }
     const userId = users[0]!.id;
+    await ChatsService.removeUsers(chatId, [userId]);
+    await this.loadChatMembers(chatId);
+  }
+
+  public async removeUserFromChatById(chatId: number, userId: number): Promise<void> {
     await ChatsService.removeUsers(chatId, [userId]);
     await this.loadChatMembers(chatId);
   }

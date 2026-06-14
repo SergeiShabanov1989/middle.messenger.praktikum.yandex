@@ -14,9 +14,12 @@ export interface Message {
 }
 
 export interface ChatMember {
+  id: number;
   name: string;
+  login: string;
   avatarUrl: string;
   initials: string;
+  isOwner: boolean;
 }
 
 export interface ChatLastMessage {
@@ -33,6 +36,7 @@ export interface Chat {
   lastMessage: ChatLastMessage;
   members: ChatMember[];
   messages: Message[];
+  createdBy: number;
 }
 
 export interface User {
@@ -84,5 +88,6 @@ export function apiChatToChat(apiChat: ApiChat): Chat {
       : { author: '', text: '', time: '' },
     members: [],
     messages: [],
+    createdBy: apiChat.created_by,
   };
 }

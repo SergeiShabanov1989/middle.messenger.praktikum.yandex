@@ -2,6 +2,7 @@ import Block, { type BlockOwnProps } from "../../core/Block";
 import ChatsController from "../../controllers/ChatsController";
 import { ApiError } from "../../core/HTTPTransport";
 import UserModal from "../../components/user-modal/UserModal";
+import MembersModal from "../../components/members-modal/MembersModal";
 import type { Chat, ChatMember } from "../../mocks/types";
 import "../../components/chat-item/chat-item.scss";
 import "../../components/chat-list/chat-list.scss";
@@ -24,6 +25,8 @@ interface ChatsPageProps extends BlockOwnProps {
   onAddUser: () => void;
   onRemoveUser: () => void;
   onCreateChat: () => void;
+  onDeleteChat: (id: number) => void;
+  onAvatarChange: () => void;
 }
 
 export default class ChatsPage extends Block<ChatsPageProps> {
@@ -31,7 +34,7 @@ export default class ChatsPage extends Block<ChatsPageProps> {
     <main class="chats-page{{#if hasActive}} chats-page--has-active{{/if}}">
       <div class="chats-page__layout">
         <div class="chats-page__sidebar">
-          {{{ ChatSidebar chats=chats activeChatId=activeChatId onSelectChat=onSelect onCreateChat=onCreateChat }}}
+          {{{ ChatSidebar chats=chats activeChatId=activeChatId onSelectChat=onSelect onCreateChat=onCreateChat onDeleteChat=onDeleteChat }}}
         </div>
         <div class="chats-page__main">
           {{#if activeChat}}
@@ -45,6 +48,7 @@ export default class ChatsPage extends Block<ChatsPageProps> {
               onSend=onSend
               onAddUser=onAddUser
               onRemoveUser=onRemoveUser
+              onAvatarChange=onAvatarChange
             }}}
           {{else}}
             <div class="chat-empty">
@@ -59,6 +63,7 @@ export default class ChatsPage extends Block<ChatsPageProps> {
   private unsubscribe: (() => void) | null = null;
   private chatsLoaded = false;
   private readonly userModal: UserModal;
+  private readonly membersModal: MembersModal;
 
   constructor() {
     const props = ChatsPage.buildProps();
@@ -74,16 +79,25 @@ export default class ChatsPage extends Block<ChatsPageProps> {
         ChatsController.sendMessage(text);
       },
       onAddUser: () => {
-        this.openUserModal("Добавить участника", "add");
+        this.openAddUserModal();
       },
       onRemoveUser: () => {
-        this.openUserModal("Удалить участника", "remove");
+        this.openMembersModal();
       },
       onCreateChat: () => {
         this.handleCreateChat();
       },
+      onDeleteChat: (id: number) => {
+        void ChatsController.deleteChat(id).catch((err: unknown) => {
+          console.error("[ChatsPage] deleteChat error", err);
+        });
+      },
+      onAvatarChange: () => {
+        this.openChatAvatarModal();
+      },
     });
     this.userModal = new UserModal();
+    this.membersModal = new MembersModal();
   }
 
   private static buildProps(): {
@@ -108,26 +122,47 @@ export default class ChatsPage extends Block<ChatsPageProps> {
     };
   }
 
-  private openUserModal(title: string, action: "add" | "remove"): void {
+  private openAddUserModal(): void {
     const chatId = this.props.activeChatId;
     if (!chatId) return;
 
-    this.userModal.show(title, (login) => {
-      const operation =
-        action === "add"
-          ? ChatsController.addUserToChat(chatId, login)
-          : ChatsController.removeUserFromChat(chatId, login);
+    this.userModal.show(
+      "Добавить участника",
+      (login) => {
+        void ChatsController.addUserToChat(chatId, login)
+          .then(() => this.userModal.hide())
+          .catch((err: unknown) => {
+            const msg = err instanceof ApiError ? err.reason : "Ошибка добавления";
+            this.userModal.showError(msg);
+          });
+      },
+      { label: "Логин пользователя", placeholder: "Введите логин" },
+    );
+  }
 
-      void operation
-        .then(() => {
-          this.userModal.hide();
-        })
+  private openChatAvatarModal(): void {
+    const activeChat = ChatsController.getActive();
+    if (!activeChat) return;
+    const chatId = activeChat.id;
+
+    this.userModal.showFile("Изменить аватар чата", (file) => {
+      void ChatsController.updateChatAvatar(chatId, file)
+        .then(() => this.userModal.hide())
         .catch((err: unknown) => {
-          const msg =
-            err instanceof ApiError ? err.reason : "Ошибка операции";
+          const msg = err instanceof ApiError ? err.reason : "Ошибка загрузки аватара";
           this.userModal.showError(msg);
         });
     });
+  }
+
+  private openMembersModal(): void {
+    const activeChat = ChatsController.getActive();
+    if (!activeChat) return;
+    const chatId = activeChat.id;
+
+    this.membersModal.show(activeChat.members, (member) =>
+      ChatsController.removeUserFromChatById(chatId, member.id),
+    );
   }
 
   protected override componentDidMount(): void {
