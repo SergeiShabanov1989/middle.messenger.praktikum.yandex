@@ -5,7 +5,7 @@ export default class NotFoundPage extends ErrorPage {
     super({
       code: "404",
       text: "Не туда попали",
-      href: "/",
+      href: "/messenger",
       linkText: "Назад к чатам",
     });
   }

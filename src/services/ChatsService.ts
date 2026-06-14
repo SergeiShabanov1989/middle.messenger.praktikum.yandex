@@ -1,44 +1,33 @@
-import { chats as initialChats } from "../mocks/chats";
-import type { Chat, Message } from "../mocks/types";
+import http from '../core/HTTPTransport';
+import type { ApiChat, ApiUser } from '../api/types';
 
 class ChatsService {
-  private chats: Chat[] = initialChats.map((chat) => ({
-    ...chat,
-    messages: [...chat.messages],
-  }));
-
-  public list(): Chat[] {
-    return this.chats;
+  public list(): Promise<ApiChat[]> {
+    return http.get<ApiChat[]>('/chats', { offset: 0, limit: 100 });
   }
 
-  public getById(id: number): Chat | null {
-    return this.chats.find((chat) => chat.id === id) ?? null;
+  public create(title: string): Promise<{ id: number }> {
+    return http.post<{ id: number }>('/chats', { title });
   }
 
-  public sendMessage(chatId: number, text: string): Message | null {
-    const chat = this.getById(chatId);
-    if (!chat) return null;
-
-    const newMessage: Message = {
-      id: Date.now(),
-      type: "out",
-      text,
-      time: this.formatTime(new Date()),
-      status: "sent",
-    };
-    chat.messages.push(newMessage);
-    chat.lastMessage = {
-      author: "Вы",
-      text,
-      time: newMessage.time ?? "",
-    };
-    return newMessage;
+  public delete(chatId: number): Promise<void> {
+    return http.delete<void>('/chats', { chatId });
   }
 
-  private formatTime(date: Date): string {
-    const hh = String(date.getHours()).padStart(2, "0");
-    const mm = String(date.getMinutes()).padStart(2, "0");
-    return `${hh}:${mm}`;
+  public addUsers(chatId: number, users: number[]): Promise<void> {
+    return http.put<void>('/chats/users', { users, chatId } as unknown as Record<string, unknown>);
+  }
+
+  public removeUsers(chatId: number, users: number[]): Promise<void> {
+    return http.delete<void>('/chats/users', { users, chatId } as unknown as Record<string, unknown>);
+  }
+
+  public getUsers(chatId: number): Promise<ApiUser[]> {
+    return http.get<ApiUser[]>(`/chats/${chatId}/users`);
+  }
+
+  public updateAvatar(formData: FormData): Promise<ApiChat> {
+    return http.put<ApiChat>('/chats/avatar', formData);
   }
 }
 

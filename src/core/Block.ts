@@ -95,6 +95,20 @@ export default abstract class Block<
     );
   }
 
+  public show(): void {
+    const el = this.element();
+    if (el instanceof HTMLElement) {
+      el.style.display = "";
+    }
+  }
+
+  public hide(): void {
+    const el = this.element();
+    if (el instanceof HTMLElement) {
+      el.style.display = "none";
+    }
+  }
+
   protected render(): void {
     this.dispatchComponentWillUnmount();
 

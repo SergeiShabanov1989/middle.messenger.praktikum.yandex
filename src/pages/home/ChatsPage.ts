@@ -1,6 +1,9 @@
 import Block, { type BlockOwnProps } from "../../core/Block";
 import ChatsController from "../../controllers/ChatsController";
-import type { Chat } from "../../mocks/types";
+import { ApiError } from "../../core/HTTPTransport";
+import UserModal from "../../components/user-modal/UserModal";
+import MembersModal from "../../components/members-modal/MembersModal";
+import type { Chat, ChatMember } from "../../mocks/types";
 import "../../components/chat-item/chat-item.scss";
 import "../../components/chat-list/chat-list.scss";
 import "../../components/chat-search/chat-search.scss";
@@ -14,9 +17,16 @@ interface ChatsPageProps extends BlockOwnProps {
   activeChat: Chat | null;
   activeChatId: number | null;
   hasActive: boolean;
+  membersPreview: ChatMember[];
+  membersMore: number;
   onSelect: (id: number) => void;
   onBack: () => void;
   onSend: (text: string) => void;
+  onAddUser: () => void;
+  onRemoveUser: () => void;
+  onCreateChat: () => void;
+  onDeleteChat: (id: number) => void;
+  onAvatarChange: () => void;
 }
 
 export default class ChatsPage extends Block<ChatsPageProps> {
@@ -24,7 +34,7 @@ export default class ChatsPage extends Block<ChatsPageProps> {
     <main class="chats-page{{#if hasActive}} chats-page--has-active{{/if}}">
       <div class="chats-page__layout">
         <div class="chats-page__sidebar">
-          {{{ ChatSidebar chats=chats activeChatId=activeChatId onSelectChat=onSelect }}}
+          {{{ ChatSidebar chats=chats activeChatId=activeChatId onSelectChat=onSelect onCreateChat=onCreateChat onDeleteChat=onDeleteChat }}}
         </div>
         <div class="chats-page__main">
           {{#if activeChat}}
@@ -32,8 +42,13 @@ export default class ChatsPage extends Block<ChatsPageProps> {
               title=activeChat.title
               avatarUrl=activeChat.avatarUrl
               messages=activeChat.messages
+              membersPreview=membersPreview
+              membersMore=membersMore
               onBack=onBack
               onSend=onSend
+              onAddUser=onAddUser
+              onRemoveUser=onRemoveUser
+              onAvatarChange=onAvatarChange
             }}}
           {{else}}
             <div class="chat-empty">
@@ -46,6 +61,9 @@ export default class ChatsPage extends Block<ChatsPageProps> {
   `;
 
   private unsubscribe: (() => void) | null = null;
+  private chatsLoaded = false;
+  private readonly userModal: UserModal;
+  private readonly membersModal: MembersModal;
 
   constructor() {
     const props = ChatsPage.buildProps();
@@ -60,7 +78,26 @@ export default class ChatsPage extends Block<ChatsPageProps> {
       onSend: (text: string) => {
         ChatsController.sendMessage(text);
       },
+      onAddUser: () => {
+        this.openAddUserModal();
+      },
+      onRemoveUser: () => {
+        this.openMembersModal();
+      },
+      onCreateChat: () => {
+        this.handleCreateChat();
+      },
+      onDeleteChat: (id: number) => {
+        void ChatsController.deleteChat(id).catch((err: unknown) => {
+          console.error("[ChatsPage] deleteChat error", err);
+        });
+      },
+      onAvatarChange: () => {
+        this.openChatAvatarModal();
+      },
     });
+    this.userModal = new UserModal();
+    this.membersModal = new MembersModal();
   }
 
   private static buildProps(): {
@@ -68,22 +105,77 @@ export default class ChatsPage extends Block<ChatsPageProps> {
     activeChat: Chat | null;
     activeChatId: number | null;
     hasActive: boolean;
+    membersPreview: ChatMember[];
+    membersMore: number;
   } {
-    const chats = ChatsController.list();
+    const chats = ChatsController.getChats();
     const activeChat = ChatsController.getActive();
     const activeChatId = ChatsController.getActiveId();
+    const members = activeChat?.members ?? [];
     return {
       chats,
       activeChat,
       activeChatId,
       hasActive: activeChat !== null,
+      membersPreview: members.slice(0, 4),
+      membersMore: Math.max(0, members.length - 4),
     };
+  }
+
+  private openAddUserModal(): void {
+    const chatId = this.props.activeChatId;
+    if (!chatId) return;
+
+    this.userModal.show(
+      "Добавить участника",
+      (login) => {
+        void ChatsController.addUserToChat(chatId, login)
+          .then(() => this.userModal.hide())
+          .catch((err: unknown) => {
+            const msg = err instanceof ApiError ? err.reason : "Ошибка добавления";
+            this.userModal.showError(msg);
+          });
+      },
+      { label: "Логин пользователя", placeholder: "Введите логин" },
+    );
+  }
+
+  private openChatAvatarModal(): void {
+    const activeChat = ChatsController.getActive();
+    if (!activeChat) return;
+    const chatId = activeChat.id;
+
+    this.userModal.showFile("Изменить аватар чата", (file) => {
+      void ChatsController.updateChatAvatar(chatId, file)
+        .then(() => this.userModal.hide())
+        .catch((err: unknown) => {
+          const msg = err instanceof ApiError ? err.reason : "Ошибка загрузки аватара";
+          this.userModal.showError(msg);
+        });
+    });
+  }
+
+  private openMembersModal(): void {
+    const activeChat = ChatsController.getActive();
+    if (!activeChat) return;
+    const chatId = activeChat.id;
+
+    this.membersModal.show(activeChat.members, (member) =>
+      ChatsController.removeUserFromChatById(chatId, member.id),
+    );
   }
 
   protected override componentDidMount(): void {
     if (!this.unsubscribe) {
       this.unsubscribe = ChatsController.subscribe(() => {
         this.setProps(ChatsPage.buildProps());
+      });
+    }
+
+    if (!this.chatsLoaded) {
+      this.chatsLoaded = true;
+      void ChatsController.loadChats().catch((err: unknown) => {
+        console.error("[ChatsPage] loadChats error", err);
       });
     }
   }
@@ -93,5 +185,26 @@ export default class ChatsPage extends Block<ChatsPageProps> {
       this.unsubscribe();
       this.unsubscribe = null;
     }
+  }
+
+  private handleCreateChat(): void {
+    this.userModal.show(
+      "Новый чат",
+      (title) => {
+        void ChatsController.createChat(title)
+          .then(() => this.userModal.hide())
+          .catch((err: unknown) => {
+            const msg =
+              err instanceof ApiError ? err.reason : "Ошибка создания чата";
+            this.userModal.showError(msg);
+          });
+      },
+      {
+        label: "Название чата",
+        placeholder: "Например: Команда разработки",
+        confirmText: "Создать",
+        emptyError: "Введите название чата",
+      },
+    );
   }
 }

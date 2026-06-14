@@ -1,5 +1,5 @@
 import Block, { type BlockOwnProps } from "../../core/Block";
-import type { Message as MessageData } from "../../mocks/types";
+import type { Message as MessageData, ChatMember } from "../../mocks/types";
 import iconPaperclip from "./icons/paperclip.svg?raw";
 import iconArrowRight from "./icons/arrow-right.svg?raw";
 import iconArrowLeft from "./icons/arrow-left.svg?raw";
@@ -10,12 +10,21 @@ export interface ChatWindowProps extends BlockOwnProps {
   title: string;
   avatarUrl: string;
   messages: MessageData[];
+  membersPreview?: ChatMember[];
+  membersMore?: number;
   onBack: () => void;
   onSend: (text: string) => void;
+  onAddUser?: () => void;
+  onRemoveUser?: () => void;
+  onAvatarChange?: () => void;
 }
 
 export default class ChatWindow extends Block<ChatWindowProps> {
   static componentName = "ChatWindow";
+
+  private closeDropdown = (): void => {
+    this.element()?.classList.remove('chat-window--menu-open');
+  };
 
   protected template = `
     <section class="chat-window">
@@ -24,16 +33,41 @@ export default class ChatWindow extends Block<ChatWindowProps> {
           ${iconArrowLeft}
         </button>
         <div class="chat-window__peer">
-          <div class="chat-window__avatar">
+          <div class="chat-window__avatar" ref="avatarEl">
             {{#if avatarUrl}}
               <img class="chat-window__avatar-img" src="{{avatarUrl}}" alt="Аватар чата" />
             {{/if}}
+            <span class="chat-window__avatar-overlay">Изменить</span>
           </div>
-          <h2 class="chat-window__title">{{title}}</h2>
+          <div class="chat-window__peer-info">
+            <h2 class="chat-window__title">{{title}}</h2>
+            {{#if membersPreview}}
+              <div class="chat-window__members">
+                {{#each membersPreview}}
+                  <div class="chat-window__member-avatar" title="{{name}}">
+                    {{#if avatarUrl}}
+                      <img src="{{avatarUrl}}" alt="{{name}}" />
+                    {{else}}
+                      {{initials}}
+                    {{/if}}
+                  </div>
+                {{/each}}
+                {{#if membersMore}}
+                  <div class="chat-window__member-more">+{{membersMore}}</div>
+                {{/if}}
+              </div>
+            {{/if}}
+          </div>
         </div>
-        <button type="button" class="chat-window__menu" aria-label="Меню чата">
-          <span></span><span></span><span></span>
-        </button>
+        <div class="chat-window__menu-wrap">
+          <button type="button" class="chat-window__menu" aria-label="Меню чата" ref="menuBtn">
+            <span></span><span></span><span></span>
+          </button>
+          <ul class="chat-window__dropdown">
+            <li class="chat-window__dropdown-item" ref="addUserItem">Добавить участника</li>
+            <li class="chat-window__dropdown-item chat-window__dropdown-item--danger" ref="removeUserItem">Участники чата</li>
+          </ul>
+        </div>
       </header>
 
       <div class="chat-window__messages">
@@ -91,6 +125,41 @@ export default class ChatWindow extends Block<ChatWindowProps> {
     if (form instanceof HTMLFormElement) {
       form.addEventListener("submit", (event) => this.handleSubmit(event));
     }
+
+    const menuBtn = this.refs["menuBtn"];
+    if (menuBtn) {
+      menuBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        this.element()?.classList.toggle("chat-window--menu-open");
+      });
+    }
+
+    const avatarEl = this.refs["avatarEl"];
+    if (avatarEl) {
+      avatarEl.addEventListener("click", () => this.props.onAvatarChange?.());
+    }
+
+    const addUserItem = this.refs["addUserItem"];
+    if (addUserItem) {
+      addUserItem.addEventListener("click", () => {
+        this.closeDropdown();
+        this.props.onAddUser?.();
+      });
+    }
+
+    const removeUserItem = this.refs["removeUserItem"];
+    if (removeUserItem) {
+      removeUserItem.addEventListener("click", () => {
+        this.closeDropdown();
+        this.props.onRemoveUser?.();
+      });
+    }
+
+    document.addEventListener("click", this.closeDropdown);
+  }
+
+  protected override componentWillUnmount(): void {
+    document.removeEventListener("click", this.closeDropdown);
   }
 
   private handleSubmit(event: Event): void {

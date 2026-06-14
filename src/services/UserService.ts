@@ -1,5 +1,14 @@
-import { user as initialUser } from "../mocks/user";
-import type { User } from "../mocks/types";
+import http from '../core/HTTPTransport';
+import type { ApiUser } from '../api/types';
+
+export interface UpdateProfileData {
+  first_name: string;
+  second_name: string;
+  display_name: string;
+  login: string;
+  email: string;
+  phone: string;
+}
 
 export interface PasswordChangeData {
   oldPassword: string;
@@ -7,19 +16,23 @@ export interface PasswordChangeData {
 }
 
 class UserService {
-  private current: User = { ...initialUser };
-
-  public get(): User {
-    return this.current;
+  public updateProfile(data: UpdateProfileData): Promise<ApiUser> {
+    return http.put<ApiUser>('/user/profile', data as unknown as Record<string, unknown>);
   }
 
-  public update(patch: Partial<User>): User {
-    this.current = { ...this.current, ...patch };
-    return this.current;
+  public changePassword(data: PasswordChangeData): Promise<void> {
+    return http.put<void>('/user/password', {
+      oldPassword: data.oldPassword,
+      newPassword: data.newPassword,
+    });
   }
 
-  public changePassword(data: PasswordChangeData): void {
-    console.info("[UserService] changePassword", data);
+  public changeAvatar(formData: FormData): Promise<ApiUser> {
+    return http.put<ApiUser>('/user/profile/avatar', formData);
+  }
+
+  public searchByLogin(login: string): Promise<ApiUser[]> {
+    return http.post<ApiUser[]>('/user/search', { login });
   }
 }
 

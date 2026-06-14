@@ -1,44 +1,139 @@
-import ChatsService from "../services/ChatsService";
-import EventBus from "../core/EventBus";
-import type { Chat, Message } from "../mocks/types";
-
-type ChatsEvent = "changed";
+import ChatsService from '../services/ChatsService';
+import UserService from '../services/UserService';
+import appStore from '../core/appStore';
+import { apiChatToChat, avatarUrl } from '../mocks/types';
+import { NotFoundError } from '../core/HTTPTransport';
+import type { Chat, Message } from '../mocks/types';
 
 class ChatsController {
-  private bus = new EventBus<ChatsEvent>();
+  public async loadChats(): Promise<void> {
+    const apiChats = await ChatsService.list();
+    appStore.set({ chats: apiChats.map(apiChatToChat) });
+  }
 
-  private activeChatId: number | null = null;
-
-  public list(): Chat[] {
-    return ChatsService.list();
+  public getChats(): Chat[] {
+    return appStore.getState().chats;
   }
 
   public getActive(): Chat | null {
-    return this.activeChatId !== null
-      ? ChatsService.getById(this.activeChatId)
-      : null;
+    const { chats, activeChatId } = appStore.getState();
+    return chats.find((c) => c.id === activeChatId) ?? null;
   }
 
   public getActiveId(): number | null {
-    return this.activeChatId;
+    return appStore.getState().activeChatId;
   }
 
   public selectChat(id: number | null): void {
-    this.activeChatId = id;
-    this.bus.emit("changed");
+    appStore.set({ activeChatId: id });
+    if (id !== null) {
+      void this.loadChatMembers(id).catch(console.error);
+    }
   }
 
-  public sendMessage(text: string): Message | null {
-    if (this.activeChatId === null) return null;
-    const message = ChatsService.sendMessage(this.activeChatId, text);
-    this.bus.emit("changed");
-    return message;
+  private async loadChatMembers(chatId: number): Promise<void> {
+    const apiUsers = await ChatsService.getUsers(chatId);
+    const { chats } = appStore.getState();
+    const chat = chats.find((c) => c.id === chatId);
+    const createdBy = chat?.createdBy ?? -1;
+    const members = apiUsers.map((u) => ({
+      id: u.id,
+      name: u.display_name ?? `${u.first_name} ${u.second_name}`,
+      login: u.login,
+      avatarUrl: avatarUrl(u.avatar),
+      initials: (u.display_name ?? u.first_name).charAt(0).toUpperCase(),
+      isOwner: u.id === createdBy,
+    }));
+    const updated = chats.map((c) =>
+      c.id === chatId ? { ...c, members } : c,
+    );
+    appStore.set({ chats: updated });
+  }
+
+  public sendMessage(text: string): void {
+    const { activeChatId, chats } = appStore.getState();
+    if (activeChatId === null) return;
+
+    const newMessage: Message = {
+      id: Date.now(),
+      type: 'out',
+      text,
+      time: new Date().toLocaleTimeString('ru-RU', {
+        hour: '2-digit',
+        minute: '2-digit',
+      }),
+      status: 'sent',
+    };
+
+    const updated = chats.map((chat) =>
+      chat.id === activeChatId
+        ? {
+            ...chat,
+            messages: [...chat.messages, newMessage],
+            lastMessage: {
+              author: 'Вы',
+              text,
+              time: newMessage.time ?? '',
+            },
+          }
+        : chat,
+    );
+    appStore.set({ chats: updated });
+  }
+
+  public async createChat(title: string): Promise<void> {
+    await ChatsService.create(title);
+    await this.loadChats();
+  }
+
+  public async deleteChat(chatId: number): Promise<void> {
+    await ChatsService.delete(chatId);
+    const { activeChatId } = appStore.getState();
+    if (activeChatId === chatId) {
+      appStore.set({ activeChatId: null });
+    }
+    await this.loadChats();
+  }
+
+  public async updateChatAvatar(chatId: number, file: File): Promise<void> {
+    const fd = new FormData();
+    fd.append('chatId', String(chatId));
+    fd.append('avatar', file);
+    const apiChat = await ChatsService.updateAvatar(fd);
+    const { chats } = appStore.getState();
+    const updated = chats.map((c) =>
+      c.id === chatId ? { ...c, avatarUrl: avatarUrl(apiChat.avatar) } : c,
+    );
+    appStore.set({ chats: updated });
+  }
+
+  public async addUserToChat(chatId: number, login: string): Promise<void> {
+    const users = await UserService.searchByLogin(login);
+    if (users.length === 0) {
+      throw new NotFoundError(`Пользователь с логином "${login}" не найден`);
+    }
+    const userId = users[0]!.id;
+    await ChatsService.addUsers(chatId, [userId]);
+    await this.loadChatMembers(chatId);
+  }
+
+  public async removeUserFromChat(chatId: number, login: string): Promise<void> {
+    const users = await UserService.searchByLogin(login);
+    if (users.length === 0) {
+      throw new NotFoundError(`Пользователь с логином "${login}" не найден`);
+    }
+    const userId = users[0]!.id;
+    await ChatsService.removeUsers(chatId, [userId]);
+    await this.loadChatMembers(chatId);
+  }
+
+  public async removeUserFromChatById(chatId: number, userId: number): Promise<void> {
+    await ChatsService.removeUsers(chatId, [userId]);
+    await this.loadChatMembers(chatId);
   }
 
   public subscribe(listener: () => void): () => void {
-    const handler = () => listener();
-    this.bus.on("changed", handler);
-    return () => this.bus.off("changed", handler);
+    return appStore.subscribe(() => listener());
   }
 }
 
