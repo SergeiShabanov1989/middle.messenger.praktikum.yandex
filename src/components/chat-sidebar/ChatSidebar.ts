@@ -7,6 +7,7 @@ export interface ChatSidebarProps extends BlockOwnProps {
   activeChatId: number | null;
   onSelectChat: (id: number) => void;
   onCreateChat: () => void;
+  onDeleteChat?: (id: number) => void;
 }
 
 export default class ChatSidebar extends Block<ChatSidebarProps> {
@@ -27,7 +28,7 @@ export default class ChatSidebar extends Block<ChatSidebarProps> {
         {{{ ChatSearch }}}
       </div>
       <div class="chat-sidebar__list">
-        {{{ ChatList chats=chats activeChatId=activeChatId onSelect=onSelectChat }}}
+        {{{ ChatList chats=chats activeChatId=activeChatId onSelect=onSelectChat onDelete=onDeleteChat }}}
       </div>
     </aside>
   `;

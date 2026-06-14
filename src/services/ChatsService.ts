@@ -25,6 +25,10 @@ class ChatsService {
   public getUsers(chatId: number): Promise<ApiUser[]> {
     return http.get<ApiUser[]>(`/chats/${chatId}/users`);
   }
+
+  public updateAvatar(formData: FormData): Promise<ApiChat> {
+    return http.put<ApiChat>('/chats/avatar', formData);
+  }
 }
 
 export default new ChatsService();

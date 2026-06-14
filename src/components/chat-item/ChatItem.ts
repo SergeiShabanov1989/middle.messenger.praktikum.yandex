@@ -10,6 +10,7 @@ export interface ChatItemProps extends BlockOwnProps {
   lastMessageTime: string;
   active: boolean;
   onClick: (id: number) => void;
+  onDelete?: (id: number) => void;
 }
 
 export default class ChatItem extends Block<ChatItemProps> {
@@ -29,6 +30,7 @@ export default class ChatItem extends Block<ChatItemProps> {
         {{#if unreadCount}}
           <span class="chat-item__badge">{{unreadCount}}</span>
         {{/if}}
+        <button type="button" class="chat-item__delete-btn" ref="deleteBtn" aria-label="Удалить чат">✕</button>
       </div>
     </article>
   `;
@@ -38,5 +40,15 @@ export default class ChatItem extends Block<ChatItemProps> {
     this.events = {
       click: () => props.onClick(props.id),
     };
+  }
+
+  protected override componentDidMount(): void {
+    const deleteBtn = this.refs["deleteBtn"];
+    if (deleteBtn) {
+      deleteBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        this.props.onDelete?.(this.props.id);
+      });
+    }
   }
 }

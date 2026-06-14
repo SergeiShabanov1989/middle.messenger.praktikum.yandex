@@ -11,11 +11,15 @@ export const chats: Chat[] = [
       text: "<b>Добро пожаловать!</b>",
       time: "09:20",
     },
+    createdBy: 0,
     members: [
       {
+        id: 0,
         name: "Бот",
+        login: "bot",
         avatarUrl: "https://placehold.co/64/lightpink/lightpink/png",
         initials: "Б",
+        isOwner: true,
       },
     ],
     messages: [
@@ -48,26 +52,39 @@ export const chats: Chat[] = [
       text: "Код-ревью в четверг?",
       time: "18:05",
     },
+    createdBy: 1,
     members: [
       {
+        id: 1,
         name: "Катя",
+        login: "katya",
         avatarUrl: "https://placehold.co/64/lightblue/lightblue/png",
         initials: "К",
+        isOwner: true,
       },
       {
+        id: 2,
         name: "Витя",
+        login: "vitya",
         avatarUrl: "https://placehold.co/64/lightgreen/lightgreen/png",
         initials: "В",
+        isOwner: false,
       },
       {
+        id: 3,
         name: "Аня",
+        login: "anya",
         avatarUrl: "https://placehold.co/64/lightsalmon/lightsalmon/png",
         initials: "А",
+        isOwner: false,
       },
       {
+        id: 4,
         name: "Лёша",
+        login: "lyosha",
         avatarUrl: "https://placehold.co/64/lightseagreen/lightseagreen/png",
         initials: "Л",
+        isOwner: false,
       },
     ],
     messages: [

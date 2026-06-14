@@ -16,6 +16,7 @@ export interface ChatWindowProps extends BlockOwnProps {
   onSend: (text: string) => void;
   onAddUser?: () => void;
   onRemoveUser?: () => void;
+  onAvatarChange?: () => void;
 }
 
 export default class ChatWindow extends Block<ChatWindowProps> {
@@ -32,10 +33,11 @@ export default class ChatWindow extends Block<ChatWindowProps> {
           ${iconArrowLeft}
         </button>
         <div class="chat-window__peer">
-          <div class="chat-window__avatar">
+          <div class="chat-window__avatar" ref="avatarEl">
             {{#if avatarUrl}}
               <img class="chat-window__avatar-img" src="{{avatarUrl}}" alt="Аватар чата" />
             {{/if}}
+            <span class="chat-window__avatar-overlay">Изменить</span>
           </div>
           <div class="chat-window__peer-info">
             <h2 class="chat-window__title">{{title}}</h2>
@@ -63,7 +65,7 @@ export default class ChatWindow extends Block<ChatWindowProps> {
           </button>
           <ul class="chat-window__dropdown">
             <li class="chat-window__dropdown-item" ref="addUserItem">Добавить участника</li>
-            <li class="chat-window__dropdown-item chat-window__dropdown-item--danger" ref="removeUserItem">Удалить участника</li>
+            <li class="chat-window__dropdown-item chat-window__dropdown-item--danger" ref="removeUserItem">Участники чата</li>
           </ul>
         </div>
       </header>
@@ -130,6 +132,11 @@ export default class ChatWindow extends Block<ChatWindowProps> {
         e.stopPropagation();
         this.element()?.classList.toggle("chat-window--menu-open");
       });
+    }
+
+    const avatarEl = this.refs["avatarEl"];
+    if (avatarEl) {
+      avatarEl.addEventListener("click", () => this.props.onAvatarChange?.());
     }
 
     const addUserItem = this.refs["addUserItem"];
