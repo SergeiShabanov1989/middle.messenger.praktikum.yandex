@@ -1,8 +1,8 @@
-import UserService from '../services/UserService';
-import type { PasswordChangeData } from '../services/UserService';
-import appStore from '../core/appStore';
-import { apiUserToUser } from '../mocks/types';
-import type { User } from '../mocks/types';
+import UserService from "../services/UserService";
+import type { PasswordChangeData } from "../services/UserService";
+import appStore from "../core/appStore";
+import { apiUserToUser } from "../mocks/types";
+import type { User } from "../mocks/types";
 
 export type { PasswordChangeData };
 
@@ -13,7 +13,7 @@ class UserController {
 
   public async update(data: Partial<User>): Promise<void> {
     const current = appStore.getState().user;
-    if (!current) throw new Error('Пользователь не авторизован');
+    if (!current) throw new Error("Пользователь не авторизован");
 
     const apiUser = await UserService.updateProfile({
       first_name: data.first_name ?? current.first_name,

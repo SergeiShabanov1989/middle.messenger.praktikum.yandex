@@ -132,7 +132,8 @@ export default class ChatsPage extends Block<ChatsPageProps> {
         void ChatsController.addUserToChat(chatId, login)
           .then(() => this.userModal.hide())
           .catch((err: unknown) => {
-            const msg = err instanceof ApiError ? err.reason : "Ошибка добавления";
+            const msg =
+              err instanceof ApiError ? err.reason : "Ошибка добавления";
             this.userModal.showError(msg);
           });
       },
@@ -149,7 +150,8 @@ export default class ChatsPage extends Block<ChatsPageProps> {
       void ChatsController.updateChatAvatar(chatId, file)
         .then(() => this.userModal.hide())
         .catch((err: unknown) => {
-          const msg = err instanceof ApiError ? err.reason : "Ошибка загрузки аватара";
+          const msg =
+            err instanceof ApiError ? err.reason : "Ошибка загрузки аватара";
           this.userModal.showError(msg);
         });
     });

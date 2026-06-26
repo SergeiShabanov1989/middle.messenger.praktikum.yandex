@@ -53,10 +53,9 @@ export default abstract class Form<
     }
   }
 
-  protected onValidSubmit(_values: Record<string, string>): Promise<void> | void {
-    // override in subclass
-  }
+  protected onValidSubmit(
+    _values: Record<string, string>,
+  ): Promise<void> | void {}
 
-  // Переопределяется в подклассах для показа ошибок API
   protected onSubmitError(_error: unknown): void {}
 }

@@ -115,7 +115,13 @@ export default class ProfilePage extends Block<ProfilePageProps> {
 
     const user = UserController.get() ?? EMPTY_USER;
 
-    super({ mode, user, isView: mode === "view", isEdit: mode === "edit", isPassword: mode === "password" });
+    super({
+      mode,
+      user,
+      isView: mode === "view",
+      isEdit: mode === "edit",
+      isPassword: mode === "password",
+    });
 
     this.buildFields(mode, user);
   }
@@ -153,7 +159,9 @@ export default class ProfilePage extends Block<ProfilePageProps> {
             value: "",
           }),
       );
-      this.initialValues = Object.fromEntries(PASSWORD_FIELDS.map((f) => [f.name, ""]));
+      this.initialValues = Object.fromEntries(
+        PASSWORD_FIELDS.map((f) => [f.name, ""]),
+      );
     } else {
       this.fieldComponents = DATA_FIELDS.map(
         (config) =>
@@ -202,7 +210,9 @@ export default class ProfilePage extends Block<ProfilePageProps> {
       });
     }
 
-    const avatarControl = this.element()?.querySelector<HTMLElement>(".profile-avatar__control");
+    const avatarControl = this.element()?.querySelector<HTMLElement>(
+      ".profile-avatar__control",
+    );
     if (avatarControl) {
       avatarControl.addEventListener("click", (e) => {
         e.preventDefault();
@@ -216,7 +226,10 @@ export default class ProfilePage extends Block<ProfilePageProps> {
               this.userModal.hide();
             })
             .catch((err: unknown) => {
-              const msg = err instanceof ApiError ? err.reason : "Ошибка загрузки аватара";
+              const msg =
+                err instanceof ApiError
+                  ? err.reason
+                  : "Ошибка загрузки аватара";
               this.userModal.showError(msg);
             });
         });
@@ -269,8 +282,7 @@ export default class ProfilePage extends Block<ProfilePageProps> {
       }
       this.returnToView();
     } catch (err) {
-      const msg =
-        err instanceof ApiError ? err.reason : "Ошибка сохранения";
+      const msg = err instanceof ApiError ? err.reason : "Ошибка сохранения";
       this.setProps({ error: msg });
     }
   }

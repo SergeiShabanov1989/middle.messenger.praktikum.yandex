@@ -23,7 +23,7 @@ export default class ChatWindow extends Block<ChatWindowProps> {
   static componentName = "ChatWindow";
 
   private closeDropdown = (): void => {
-    this.element()?.classList.remove('chat-window--menu-open');
+    this.element()?.classList.remove("chat-window--menu-open");
   };
 
   protected template = `
