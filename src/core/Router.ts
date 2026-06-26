@@ -29,7 +29,7 @@ class Route {
   }
 
   public match(pathname: string): boolean {
-    return pathname === this.pathname;
+    return this.pathname === "*" || pathname === this.pathname;
   }
 
   public render(): void {

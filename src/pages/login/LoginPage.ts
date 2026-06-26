@@ -43,9 +43,7 @@ export default class LoginPage extends Form<LoginPageProps> {
 
   protected override onSubmitError(err: unknown): void {
     const msg =
-      err instanceof ApiError
-        ? err.reason
-        : "Ошибка входа. Проверьте данные.";
+      err instanceof ApiError ? err.reason : "Ошибка входа. Проверьте данные.";
     this.setProps({ error: msg });
   }
 }

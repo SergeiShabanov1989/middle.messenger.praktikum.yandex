@@ -1,8 +1,11 @@
-import AuthService, { type LoginData, type RegisterData } from '../services/AuthService';
-import { router } from '../core/routerInstance';
-import appStore from '../core/appStore';
-import { apiUserToUser } from '../mocks/types';
-import { UnauthorizedError } from '../core/HTTPTransport';
+import AuthService, {
+  type LoginData,
+  type RegisterData,
+} from "../services/AuthService";
+import { router } from "../core/routerInstance";
+import appStore from "../core/appStore";
+import { apiUserToUser } from "../mocks/types";
+import { UnauthorizedError } from "../core/HTTPTransport";
 
 export type { LoginData, RegisterData };
 
@@ -11,7 +14,7 @@ class AuthController {
     await AuthService.login(data);
     const apiUser = await AuthService.getUser();
     appStore.set({ user: apiUserToUser(apiUser), isAuthChecked: true });
-    router.go('/messenger');
+    router.go("/messenger");
   }
 
   public async register(data: RegisterData): Promise<void> {
@@ -25,13 +28,13 @@ class AuthController {
     });
     const apiUser = await AuthService.getUser();
     appStore.set({ user: apiUserToUser(apiUser), isAuthChecked: true });
-    router.go('/messenger');
+    router.go("/messenger");
   }
 
   public async logout(): Promise<void> {
     await AuthService.logout();
     appStore.set({ user: null, isAuthChecked: true });
-    router.go('/');
+    router.go("/");
   }
 
   public async checkAuth(): Promise<void> {

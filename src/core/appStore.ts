@@ -1,5 +1,5 @@
-import Store from './Store';
-import type { User, Chat } from '../mocks/types';
+import Store from "./Store";
+import type { User, Chat } from "../mocks/types";
 
 export interface AppState {
   user: User | null;

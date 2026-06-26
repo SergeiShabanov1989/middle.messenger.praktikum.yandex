@@ -1,5 +1,5 @@
-import http from '../core/HTTPTransport';
-import type { ApiUser } from '../api/types';
+import http from "../core/HTTPTransport";
+import type { ApiUser } from "../api/types";
 
 export interface LoginData {
   login: string;
@@ -17,14 +17,14 @@ export interface RegisterData {
 
 class AuthService {
   public login(data: LoginData): Promise<void> {
-    return http.post<void>('/auth/signin', {
+    return http.post<void>("/auth/signin", {
       login: data.login,
       password: data.password,
     });
   }
 
   public register(data: RegisterData): Promise<{ id: number }> {
-    return http.post<{ id: number }>('/auth/signup', {
+    return http.post<{ id: number }>("/auth/signup", {
       first_name: data.first_name,
       second_name: data.second_name,
       login: data.login,
@@ -35,11 +35,11 @@ class AuthService {
   }
 
   public logout(): Promise<void> {
-    return http.post<void>('/auth/logout');
+    return http.post<void>("/auth/logout");
   }
 
   public getUser(): Promise<ApiUser> {
-    return http.get<ApiUser>('/auth/user');
+    return http.get<ApiUser>("/auth/user");
   }
 }
 

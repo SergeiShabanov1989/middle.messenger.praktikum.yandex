@@ -12,7 +12,12 @@ import NotFoundPage from "./pages/not-found/NotFoundPage";
 
 const PUBLIC_ROUTES = ["/", "/sign-up"];
 const ERROR_ROUTES = ["/404", "/500"];
-const ALL_ROUTES = [...PUBLIC_ROUTES, ...ERROR_ROUTES, "/messenger", "/settings"];
+const ALL_ROUTES = [
+  ...PUBLIC_ROUTES,
+  ...ERROR_ROUTES,
+  "/messenger",
+  "/settings",
+];
 
 registerAllComponents();
 
@@ -27,7 +32,11 @@ async function init(): Promise<void> {
         return "/404";
       }
 
-      if (!user && !PUBLIC_ROUTES.includes(pathname) && !ERROR_ROUTES.includes(pathname)) {
+      if (
+        !user &&
+        !PUBLIC_ROUTES.includes(pathname) &&
+        !ERROR_ROUTES.includes(pathname)
+      ) {
         return "/";
       }
 

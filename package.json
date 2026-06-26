@@ -19,18 +19,25 @@
     "lint:js": "eslint .",
     "lint:js:fix": "eslint --fix .",
     "lint": "npm run type:check && npm run lint:js && npm run lint:css && npm run format",
-    "lint:fix": "npm run lint:js:fix && npm run lint:css:fix && npm run format:fix"
+    "lint:fix": "npm run lint:js:fix && npm run lint:css:fix && npm run format:fix",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "eslint": "^10.4.0",
     "globals": "^17.6.0",
+    "husky": "^9.1.7",
+    "jsdom": "^29.1.1",
     "prettier": "^3.8.3",
     "stylelint": "^17.11.1",
     "stylelint-config-standard": "^40.0.0",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.59.4",
-    "vite": "^8.0.10"
+    "vite": "^8.0.10",
+    "vitest": "^4.1.9"
   },
   "dependencies": {
     "handlebars": "^4.7.9",
