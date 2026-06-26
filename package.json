@@ -26,6 +26,7 @@
     "prepare": "husky"
   },
   "devDependencies": {
+    "jest": "npm:empty-npm-package@^1.0.0",
     "@eslint/js": "^10.0.1",
     "eslint": "^10.4.0",
     "globals": "^17.6.0",
