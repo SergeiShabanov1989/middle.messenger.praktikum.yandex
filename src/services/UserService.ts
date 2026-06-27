@@ -1,5 +1,5 @@
-import http from '../core/HTTPTransport';
-import type { ApiUser } from '../api/types';
+import http from "../core/HTTPTransport";
+import type { ApiUser } from "../api/types";
 
 export interface UpdateProfileData {
   first_name: string;
@@ -17,22 +17,25 @@ export interface PasswordChangeData {
 
 class UserService {
   public updateProfile(data: UpdateProfileData): Promise<ApiUser> {
-    return http.put<ApiUser>('/user/profile', data as unknown as Record<string, unknown>);
+    return http.put<ApiUser>(
+      "/user/profile",
+      data as unknown as Record<string, unknown>,
+    );
   }
 
   public changePassword(data: PasswordChangeData): Promise<void> {
-    return http.put<void>('/user/password', {
+    return http.put<void>("/user/password", {
       oldPassword: data.oldPassword,
       newPassword: data.newPassword,
     });
   }
 
   public changeAvatar(formData: FormData): Promise<ApiUser> {
-    return http.put<ApiUser>('/user/profile/avatar', formData);
+    return http.put<ApiUser>("/user/profile/avatar", formData);
   }
 
   public searchByLogin(login: string): Promise<ApiUser[]> {
-    return http.post<ApiUser[]>('/user/search', { login });
+    return http.post<ApiUser[]>("/user/search", { login });
   }
 }
 

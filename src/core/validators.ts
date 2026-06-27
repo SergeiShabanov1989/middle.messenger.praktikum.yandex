@@ -64,7 +64,9 @@ const RULES: Record<FieldName, (value: string) => ValidationResult> = {
       : fail("8–40 символов, минимум одна заглавная буква и одна цифра"),
 
   phone: (value) =>
-    PHONE_REGEX.test(value) ? ok() : fail("10–15 цифр, может начинаться с плюса"),
+    PHONE_REGEX.test(value)
+      ? ok()
+      : fail("10–15 цифр, может начинаться с плюса"),
 
   display_name: (value) =>
     value.trim().length > 0 ? ok() : fail(REQUIRED_MESSAGE),

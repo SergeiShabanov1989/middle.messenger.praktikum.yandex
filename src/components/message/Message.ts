@@ -21,7 +21,7 @@ export default class Message extends Block<MessageProps> {
           <img class="message__image" src="{{imageUrl}}" alt="Прикрепленное изображение" />
         {{/if}}
         {{#if text}}
-          <p class="message__text">{{{text}}}</p>
+          <p class="message__text">{{text}}</p>
         {{/if}}
         <div class="message__meta">
           <time class="message__time">{{time}}</time>

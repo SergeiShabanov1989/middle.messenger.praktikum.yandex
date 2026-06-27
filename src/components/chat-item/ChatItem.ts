@@ -23,7 +23,7 @@ export default class ChatItem extends Block<ChatItemProps> {
       </div>
       <div class="chat-item__body">
         <h2 class="chat-item__title">{{title}}</h2>
-        <p class="chat-item__preview">{{{lastMessageText}}}</p>
+        <p class="chat-item__preview">{{lastMessageText}}</p>
       </div>
       <div class="chat-item__meta">
         <time class="chat-item__time">{{lastMessageTime}}</time>

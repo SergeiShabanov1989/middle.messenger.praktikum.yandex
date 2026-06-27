@@ -109,7 +109,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background-color 0.15s, color 0.15s;
+    transition:
+      background-color 0.15s,
+      color 0.15s;
 
     &:hover:not(:disabled) {
       background-color: var(--color-danger-tint, rgb(220 38 38 / 8%));
